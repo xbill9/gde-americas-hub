@@ -1,0 +1,148 @@
+site_name: GDE Americas Hub
+site_url: https://gde-americas-hub.github.io/gde-americas-hub/
+site_description: Technical resources and Codelabs for GDE Americas.
+
+theme:
+  name: material
+  logo: assets/logo.png # Optional: add your logo here later
+  favicon: assets/favicon.png
+  palette:
+    # Google Palette: Blue #4285F4, Red #EA4335, Yellow #FBBC05, Green #34A853
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate  # Enable code annotations
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/gde-americas/gde-americas-hub
+      name: GitHub Repository
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/@GoogleDevelopers
+      name: Google Developers YouTube
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/GoogleDevs
+      name: Google Developers Twitter
+
+  generator: false  # Remove "Made with Material for MkDocs" footer
+
+copyright: |
+  Copyright &copy; 2026 GDE Americas Community<br>
+  <a href="/gde-americas-hub/CODE_OF_CONDUCT/">Code of Conduct</a> |
+  <a href="/gde-americas-hub/GOVERNANCE/">Governance</a> |
+  <a href="/gde-americas-hub/CONTRIBUTING/">Contributing</a>
+
+plugins:
+  - search
+  - blog:
+      blog_dir: blog
+      post_date_format: full
+      post_url_format: "{slug}"
+      authors_file: "{blog}/.authors.yml"
+      categories_allowed:
+        - Android
+        - Firebase
+        - Google Cloud
+        - Flutter
+        - AI & ML
+        - Web
+        - Maps
+        - Ads
+        - Workspace
+        - General
+
+nav:
+  - Home: index.md
+
+  - Codelabs:
+    - Overview: codelabs/index.md
+    - Android: codelabs/android/
+    - Firebase: codelabs/firebase/
+    - Google Cloud: codelabs/cloud/
+    - Flutter: codelabs/flutter/
+    - AI & ML: codelabs/ai-ml/
+    - Web: codelabs/web/
+    - Maps: codelabs/maps/
+    - Ads: codelabs/ads/
+    - Workspace: codelabs/workspace/
+    - General: codelabs/general/
+
+  - Blog: blog/index.md
+
+  - Resources:
+    - Overview: resources/index.md
+    - Presentations: resources/presentations/
+    - Videos: resources/videos/
+    - Papers: resources/papers/
+    - Tools: resources/tools/
+
+  - Learning Paths:
+    - Overview: learning-paths/index.md
+    - Mobile: learning-paths/mobile/
+    - Web: learning-paths/web/
+    - Cloud: learning-paths/cloud/
+    - AI & ML: learning-paths/ai-ml/
+    - Data: learning-paths/data/
+
+  - About:
+    - How to Contribute: CONTRIBUTING.md
+    - Governance: GOVERNANCE.md
+    - Code of Conduct: CODE_OF_CONDUCT.md
+    - Maintainers: MAINTAINERS.md
+
+markdown_extensions:
+  # Admonitions and callouts
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - def_list
+  - abbr
+  - footnotes
+
+  # Code blocks with syntax highlighting
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+
+  # Content tabs and task lists
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+  # Icons, emojis and keys
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.keys
