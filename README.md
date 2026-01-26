@@ -117,6 +117,73 @@ mkdocs build
 # Output will be in site/ directory
 ```
 
+## 🚀 Deployment
+
+This site is automatically deployed using **Netlify** with continuous deployment from GitHub.
+
+### How It Works
+
+**Every time code is pushed:**
+
+1. **Main Branch** → Automatic production deployment
+   - Generates all codelabs from source markdown
+   - Builds the MkDocs site
+   - Deploys to production URL
+
+2. **Pull Requests** → Automatic deploy previews
+   - Each PR gets a unique preview URL
+   - Perfect for reviewing codelabs before merging
+   - No local setup needed for reviewers!
+
+3. **Other Branches** → Branch deployments
+   - Test features before creating a PR
+
+### What Gets Deployed
+
+The build process automatically:
+- Installs `claat` tool
+- Exports all codelabs from `docs/codelabs/source/*.md`
+- Builds the MkDocs site with all content
+- Deploys to Netlify's global CDN
+
+### Local vs Production
+
+**Local Development:**
+```bash
+# 1. Write your codelab source
+vim docs/codelabs/source/my-codelab.md
+
+# 2. Export locally to preview (OPTIONAL)
+./scripts/export-codelab.sh docs/codelabs/source/my-codelab.md android
+
+# 3. Preview with MkDocs
+mkdocs serve
+
+# 4. Commit ONLY the source file
+git add docs/codelabs/source/my-codelab.md
+git commit -m "Add codelab: My Tutorial"
+```
+
+**⚠️ IMPORTANT**: Generated HTML files are **automatically git-ignored**. Do NOT commit them!
+
+**Production Build (Automatic):**
+```bash
+# When you push to GitHub, Netlify automatically:
+1. Installs claat tool
+2. Exports codelabs from source/*.md (incremental for PRs, full for production)
+3. Builds MkDocs site
+4. Deploys to production/preview URL
+```
+
+**Why This Approach?**
+- ✅ Clean repository (no generated files)
+- ✅ No merge conflicts on HTML
+- ✅ Faster PR reviews
+- ✅ Always consistent (generated from source)
+- ✅ Smaller repo size
+
+See [`netlify.toml`](netlify.toml) for the full build configuration.
+
 ## 🤝 Contributing
 
 We welcome contributions from all GDEs! This project thrives on community participation.
@@ -171,7 +238,27 @@ Content is organized by Google product categories:
 - [MkDocs](https://www.mkdocs.org/) - Static site generator
 - [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) - Material Design theme
 - [Google Codelabs Tools](https://github.com/googlecodelabs/tools) - Codelab format
-- GitHub Pages - Hosting
+- [Netlify](https://netlify.com) - Deployment and hosting
+
+## 📚 Documentation
+
+### For Contributors
+
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute content
+- **[docs/codelabs/source/README.md](docs/codelabs/source/README.md)** - Codelab authoring guide
+- **[scripts/README.md](scripts/README.md)** - Helper scripts documentation
+
+### For Maintainers
+
+- **[GOVERNANCE.md](GOVERNANCE.md)** - Governance model and roles
+- **[MAINTAINERS.md](MAINTAINERS.md)** - Current maintainers list
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment and CI/CD setup
+- **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** - Community standards
+
+### Important Notes
+
+- **[docs/codelabs/README.md](docs/codelabs/README.md)** - ⚠️ **Read this**: What to commit vs. NOT commit
+- **[WORKFLOW_SUMMARY.md](WORKFLOW_SUMMARY.md)** - Complete workflow documentation
 
 ## 📜 License
 

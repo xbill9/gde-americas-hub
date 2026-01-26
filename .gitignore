@@ -210,5 +210,19 @@ __marimo__/
 *.tmp
 .claat-*
 
-# Codelab build artifacts (keep generated HTML)
-# but ignore temp files
+# Codelab generated HTML (NOT committed to git)
+# We only commit source markdown files in docs/codelabs/source/
+# The HTML is generated during CI/CD build
+docs/codelabs/android/*/
+docs/codelabs/firebase/*/
+docs/codelabs/cloud/*/
+docs/codelabs/flutter/*/
+docs/codelabs/ai-ml/*/
+docs/codelabs/web/*/
+docs/codelabs/maps/*/
+docs/codelabs/ads/*/
+docs/codelabs/workspace/*/
+docs/codelabs/general/*/
+
+# BUT keep the index.md files in each category
+!docs/codelabs/*/index.md

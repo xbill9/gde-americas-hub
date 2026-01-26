@@ -1,0 +1,102 @@
+# Netlify Configuration for GDE Americas Hub
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Build command that will be run on Netlify
+  command = """
+    # Install claat tool
+    echo '📦 Installing claat...'
+    go install github.com/googlecodelabs/tools/claat@latest
+    export PATH=$PATH:$(go env GOPATH)/bin
+
+    # Export all codelabs from source
+    echo '🔨 Exporting codelabs...'
+    ./scripts/export-all-codelabs.sh
+
+    # Build MkDocs site
+    echo '🏗️ Building MkDocs site...'
+    mkdocs build --strict
+  """
+
+  # Directory where the build output will be
+  publish = "site"
+
+  # Python version to use
+  [build.environment]
+    PYTHON_VERSION = "3.11"
+
+# Production deployment (main branch)
+# Uses full build to ensure all codelabs are up-to-date
+[context.production]
+  command = """
+    echo '🚀 Building production site...'
+    go install github.com/googlecodelabs/tools/claat@latest
+    export PATH=$PATH:$(go env GOPATH)/bin
+    echo 'Exporting all codelabs (full build)...'
+    ./scripts/export-all-codelabs.sh --all
+    mkdocs build --strict
+  """
+
+# Deploy Preview (Pull Requests)
+# Uses incremental build (only changed codelabs) for speed
+[context.deploy-preview]
+  command = """
+    echo '👀 Building deploy preview...'
+    go install github.com/googlecodelabs/tools/claat@latest
+    export PATH=$PATH:$(go env GOPATH)/bin
+    echo 'Exporting changed codelabs (incremental build)...'
+    ./scripts/export-all-codelabs.sh
+    mkdocs build --strict
+  """
+
+# Branch deploys (other branches)
+# Uses incremental build for speed
+[context.branch-deploy]
+  command = """
+    echo '🌿 Building branch deployment...'
+    go install github.com/googlecodelabs/tools/claat@latest
+    export PATH=$PATH:$(go env GOPATH)/bin
+    echo 'Exporting changed codelabs (incremental build)...'
+    ./scripts/export-all-codelabs.sh
+    mkdocs build --strict
+  """
+
+# Redirect rules (if needed)
+[[redirects]]
+  from = "/codelabs"
+  to = "/codelabs/index.html"
+  status = 200
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Plugin configuration
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
+  [plugins.inputs]
+    buildDir = "site"
+    exclude = [
+      "404.html"
+    ]

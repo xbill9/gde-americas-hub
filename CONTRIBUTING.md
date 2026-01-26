@@ -57,16 +57,46 @@ Codelabs are interactive, step-by-step tutorials using Google's official `claat`
    Content here...
    ```
 
-4. **Export using helper script**:
+4. **Export locally to preview** (optional):
    ```bash
    ./scripts/export-codelab.sh docs/codelabs/source/your-codelab.md android
    ```
+   This script automatically:
+   - Exports your markdown to HTML
+   - Updates the category index page
+   - Shows you how to preview locally
 
-5. **Update category index**: Add your codelab to `docs/codelabs/{category}/index.md`
+5. **Commit ONLY the source**:
+   ```bash
+   git add docs/codelabs/source/your-codelab.md
+   git add docs/codelabs/android/index.md  # If updated
+   git commit -m "Add codelab: Your Codelab Title"
+   ```
+
+**⚠️ CRITICAL - What to Commit:**
+
+```bash
+# ✅ DO commit these:
+git add docs/codelabs/source/your-codelab.md  # Source file
+git add docs/codelabs/android/index.md        # Category index (if updated)
+
+# ❌ NEVER commit these:
+# docs/codelabs/android/your-codelab-id/      # Generated HTML (git-ignored)
+```
+
+**Why?**
+- Generated HTML is **automatically created** by Netlify during deployment
+- Committing generated files causes:
+  - ❌ Repository bloat (100-500KB per codelab)
+  - ❌ Merge conflicts
+  - ❌ Difficult PR reviews
+  - ❌ Inconsistencies
+
+**The `.gitignore` protects you** - generated directories are automatically ignored!
 
 **Locations**:
-- Source files: `docs/codelabs/source/` (markdown)
-- Generated files: `docs/codelabs/{category}/{id}/` (HTML)
+- Source files: `docs/codelabs/source/` (markdown) ← **Commit these**
+- Generated files: `docs/codelabs/{category}/{id}/` (HTML) ← **Git-ignored**
 
 **Format Details**:
 - Use `##` for sections (steps)
