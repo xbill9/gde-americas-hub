@@ -54,6 +54,9 @@ copyright: |
   <a href="/gde-americas-hub/GOVERNANCE/">Governance</a> |
   <a href="/gde-americas-hub/CONTRIBUTING/">Contributing</a>
 
+hooks:
+  - hooks/copy_codelabs.py
+
 plugins:
   - search
   - blog:
