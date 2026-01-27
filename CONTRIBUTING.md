@@ -115,9 +115,31 @@ git add docs/codelabs/android/index.md        # Category index (if updated)
 
 Technical articles, insights, and best practices.
 
-**Location**: `docs/blog/{product-category}/`
+**Location**: `docs/blog/posts/`
 
-**Format**: Markdown with frontmatter
+**Format**: Markdown with YAML frontmatter
+
+**Quick Start - Two Options:**
+
+**Option 1: Import from dev.to (Easiest!)**
+```bash
+./scripts/import-from-devto.sh https://dev.to/yourname/your-post
+```
+
+**Option 2: Write from Scratch**
+Follow the template in [`docs/blog/HOW_TO_POST.md`](docs/blog/HOW_TO_POST.md)
+
+**⚠️ CRITICAL:** Date format MUST be unquoted:
+```yaml
+date: 2026-01-27  # ✅ Correct
+date: "2026-01-27"  # ❌ Build fails
+```
+
+**Before Submitting:**
+```bash
+# Validate and auto-fix common issues
+./scripts/validate-blog-posts.sh --fix
+```
 
 **Structure**:
 ```markdown

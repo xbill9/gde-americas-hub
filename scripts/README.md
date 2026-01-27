@@ -4,6 +4,92 @@ Helper scripts for managing the GDE Americas Hub.
 
 ## Available Scripts
 
+### Blog Post Management
+
+#### import-from-devto.sh
+
+**Purpose:** Import a blog post from dev.to and convert to correct format.
+
+**Usage:**
+
+```bash
+# Import from dev.to
+./scripts/import-from-devto.sh https://dev.to/username/post-title-123
+
+# Import and specify author
+./scripts/import-from-devto.sh https://dev.to/username/post-title-123 your_author_id
+```
+
+**What it does:**
+
+1. ✅ Fetches post from dev.to API
+2. ✅ Converts frontmatter to MkDocs format
+3. ✅ Fixes date format (unquoted)
+4. ✅ Maps tags to categories
+5. ✅ Adds "General" category if none matched
+6. ✅ Creates file in `docs/blog/posts/`
+7. ✅ Shows next steps
+
+**Use this when:** You have a post on dev.to and want to cross-post to the hub.
+
+---
+
+#### validate-blog-posts.sh
+
+**Purpose:** Validate blog post frontmatter and auto-fix common issues.
+
+**Usage:**
+
+```bash
+# Validate all posts
+./scripts/validate-blog-posts.sh
+
+# Validate specific post
+./scripts/validate-blog-posts.sh docs/blog/posts/my-post.md
+
+# Auto-fix common issues
+./scripts/validate-blog-posts.sh --fix
+
+# Auto-fix specific post
+./scripts/validate-blog-posts.sh --fix docs/blog/posts/my-post.md
+```
+
+**What it checks:**
+
+- ✅ Date format (quoted = BAD, unquoted = GOOD)
+- ✅ Categories format (string = BAD, list = GOOD)
+- ✅ Required fields (date, authors, categories)
+- ✅ Author exists in `.authors.yml`
+- ✅ Valid categories
+- 🔧 Auto-fix: Removes quotes from dates
+- 🔧 Auto-fix: Converts categories string → list
+- 🔧 Auto-fix: Adds "General" if no categories
+
+**Common errors detected:**
+1. `date: "2026-01-27"` (quoted) → Converts to `date: 2026-01-27`
+2. `categories: "Events"` (string) → Converts to `categories:\n  - Events`
+3. Missing categories → Adds `General` as default
+
+**Use this when:**
+- Before committing a blog post
+- CI/CD pipeline (optional)
+- Debugging build failures
+
+**Output example:**
+```
+Validating: 2026-01-27-my-post.md
+  ✓ Date format: ✓ (unquoted date object)
+  ✓ Authors field: ✓
+  ⚠ Categories field exists but is empty - will add 'General'
+  Status: WARNING (should fix)
+```
+
+---
+
+### Codelab Management
+
+## Available Scripts
+
 ### export-codelab.sh
 
 **Purpose:** Export a single codelab from markdown and organize it into the correct category.

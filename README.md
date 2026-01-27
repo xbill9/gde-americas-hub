@@ -213,7 +213,10 @@ Interested in helping review contributions? See our [Governance Document](GOVERN
 ### Content Types
 
 - **Codelabs**: Step-by-step tutorials using `claat` format
+  - Use `./scripts/export-codelab.sh` for export
 - **Blog Posts**: Technical articles in Markdown
+  - Import from dev.to: `./scripts/import-from-devto.sh URL`
+  - Validate before submitting: `./scripts/validate-blog-posts.sh --fix`
 - **Resources**: Presentations, videos, papers with metadata
 - **Learning Paths**: Curated learning journeys (discuss first)
 
