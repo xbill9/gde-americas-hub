@@ -78,13 +78,43 @@ if [ -z "$ARTICLE_JSON" ] || [[ "$ARTICLE_JSON" == *"error"* ]]; then
     print_error "Failed to fetch article. Check the URL and try again."
 fi
 
-# Extract metadata using grep and sed (works without jq)
-TITLE=$(echo "$ARTICLE_JSON" | grep -o '"title":"[^"]*"' | head -1 | sed 's/"title":"\(.*\)"/\1/')
-DESCRIPTION=$(echo "$ARTICLE_JSON" | grep -o '"description":"[^"]*"' | head -1 | sed 's/"description":"\(.*\)"/\1/')
-PUBLISHED_AT=$(echo "$ARTICLE_JSON" | grep -o '"published_at":"[^"]*"' | head -1 | sed 's/"published_at":"\(.*\)"/\1/')
-TAGS=$(echo "$ARTICLE_JSON" | grep -o '"tag_list":\[[^\]]*\]' | head -1)
-CANONICAL_URL=$(echo "$ARTICLE_JSON" | grep -o '"canonical_url":"[^"]*"' | head -1 | sed 's/"canonical_url":"\(.*\)"/\1/')
-BODY_MARKDOWN=$(echo "$ARTICLE_JSON" | sed -n 's/.*"body_markdown":"\(.*\)","created_at".*/\1/p' | sed 's/\\n/\n/g' | sed 's/\\"/"/g')
+# Extract metadata using Python (more reliable than sed for JSON parsing)
+# Python is available on virtually all systems and handles JSON properly
+PARSED_DATA=$(python3 -c "
+import json
+import sys
+
+try:
+    data = json.loads(sys.stdin.read())
+    print('TITLE=' + data.get('title', ''))
+    print('|||TITLE_END|||')
+    print('DESCRIPTION=' + data.get('description', ''))
+    print('|||DESCRIPTION_END|||')
+    print('PUBLISHED_AT=' + data.get('published_at', ''))
+    print('|||PUBLISHED_AT_END|||')
+    print('CANONICAL_URL=' + data.get('canonical_url', ''))
+    print('|||CANONICAL_URL_END|||')
+    print('TAG_LIST=' + ','.join(data.get('tag_list', [])))
+    print('|||TAG_LIST_END|||')
+    print('BODY_MARKDOWN_START|||')
+    print(data.get('body_markdown', ''))
+    print('|||BODY_MARKDOWN_END')
+except Exception as e:
+    print('ERROR: ' + str(e), file=sys.stderr)
+    sys.exit(1)
+" <<< "$ARTICLE_JSON")
+
+if [ $? -ne 0 ]; then
+    print_error "Failed to parse JSON. Is Python3 installed?"
+fi
+
+# Extract fields from parsed data
+TITLE=$(echo "$PARSED_DATA" | sed -n '/^TITLE=/,/|||TITLE_END|||/p' | head -1 | sed 's/^TITLE=//')
+DESCRIPTION=$(echo "$PARSED_DATA" | sed -n '/^DESCRIPTION=/,/|||DESCRIPTION_END|||/p' | head -1 | sed 's/^DESCRIPTION=//')
+PUBLISHED_AT=$(echo "$PARSED_DATA" | sed -n '/^PUBLISHED_AT=/,/|||PUBLISHED_AT_END|||/p' | head -1 | sed 's/^PUBLISHED_AT=//')
+CANONICAL_URL=$(echo "$PARSED_DATA" | sed -n '/^CANONICAL_URL=/,/|||CANONICAL_URL_END|||/p' | head -1 | sed 's/^CANONICAL_URL=//')
+TAG_LIST=$(echo "$PARSED_DATA" | sed -n '/^TAG_LIST=/,/|||TAG_LIST_END|||/p' | head -1 | sed 's/^TAG_LIST=//')
+BODY_MARKDOWN=$(echo "$PARSED_DATA" | sed -n '/BODY_MARKDOWN_START|||/,/|||BODY_MARKDOWN_END/p' | sed '1d;$d')
 
 if [ -z "$TITLE" ]; then
     print_error "Failed to parse article data. The article might be private or the API response format changed."
@@ -96,14 +126,11 @@ print_success "Article fetched: $TITLE"
 POST_DATE=$(echo "$PUBLISHED_AT" | cut -d'T' -f1)
 
 # Convert tags to categories
-# Extract tag names from JSON array
+# TAG_LIST is already a comma-separated list from Python parsing
 CATEGORIES=""
-if [ -n "$TAGS" ]; then
-    # Parse tag_list array
-    TAGS_CLEAN=$(echo "$TAGS" | sed 's/"tag_list":\[//; s/\]//; s/"//g')
-
+if [ -n "$TAG_LIST" ]; then
     # Map common dev.to tags to our categories
-    for tag in $(echo "$TAGS_CLEAN" | tr ',' '\n'); do
+    for tag in $(echo "$TAG_LIST" | tr ',' '\n'); do
         tag=$(echo "$tag" | xargs) # trim whitespace
         case "${tag,,}" in # lowercase for comparison
             android)
@@ -118,7 +145,7 @@ if [ -n "$TAGS" ]; then
             flutter)
                 CATEGORIES="${CATEGORIES}Flutter, "
                 ;;
-            ai|ml|machinelearning|artificialintelligence)
+            ai|ml|machinelearning|artificialintelligence|adk|mcp|a2a|llm|genai)
                 CATEGORIES="${CATEGORIES}AI & ML, "
                 ;;
             web|javascript|webdev)
