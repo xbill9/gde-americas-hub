@@ -147,7 +147,8 @@ validate_post() {
         if [ -f "docs/blog/.authors.yml" ]; then
             AUTHORS_IN_POST=$(echo "$FRONTMATTER" | sed -n '/^authors:/,/^[a-z]/p' | grep "^  -" | sed 's/^  - //')
             for author in $AUTHORS_IN_POST; do
-                if ! grep -q "^${author}:" docs/blog/.authors.yml; then
+                # Check for both formats: "^author:" (root level) or "  author:" (indented under "authors:")
+                if ! grep -q "^${author}:" docs/blog/.authors.yml && ! grep -q "^  ${author}:" docs/blog/.authors.yml; then
                     print_warning "  Author '$author' not found in .authors.yml"
                     has_warnings=true
                     WARNINGS=$((WARNINGS + 1))
