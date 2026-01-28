@@ -80,7 +80,8 @@ fi
 # Fetch with curl
 ARTICLE_JSON=$(curl -s "$API_URL")
 
-if [ -z "$ARTICLE_JSON" ] || [[ "$ARTICLE_JSON" == *"error"* ]]; then
+# Check if response is empty or is an actual API error (has "status" field with error code)
+if [ -z "$ARTICLE_JSON" ] || [[ "$ARTICLE_JSON" == *'"status"'* ]] || [[ "$ARTICLE_JSON" == *'"error":'* ]]; then
     print_error "Failed to fetch article. Check the URL and try again."
 fi
 
@@ -184,7 +185,7 @@ if [ -z "$AUTHOR_SLUG" ]; then
     echo ""
     print_info "Available authors in .authors.yml:"
     if [ -f "docs/blog/.authors.yml" ]; then
-        grep "^[a-z_]*:" docs/blog/.authors.yml | sed 's/:$//' | sed 's/^/  - /'
+        grep "^[[:space:]]*[a-z_]*:" docs/blog/.authors.yml | sed 's/:$//' | sed 's/^[[:space:]]*//' | sed 's/^/  - /'
     fi
     echo ""
     read -p "Enter author slug (from .authors.yml): " AUTHOR_SLUG
@@ -192,7 +193,7 @@ fi
 
 # Verify author exists
 if [ -f "docs/blog/.authors.yml" ]; then
-    if ! grep -q "^${AUTHOR_SLUG}:" docs/blog/.authors.yml; then
+    if ! grep -q "^[[:space:]]*${AUTHOR_SLUG}:" docs/blog/.authors.yml; then
         print_warning "Author '$AUTHOR_SLUG' not found in .authors.yml"
         echo ""
         read -p "Continue anyway? (y/n): " CONTINUE

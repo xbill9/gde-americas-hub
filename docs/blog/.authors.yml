@@ -2,7 +2,6 @@ authors:
   gde_americas:
     name: GDE Americas Team
     description: Google Developer Experts from across the Americas
-    avatar: https://lh3.googleusercontent.com/a-/ALV-UjX0IA165xwhhGrII_ukKiOf1X8KVe-v0ZCciFjcyhXWCZPzAc0=s300
     
   xbill9: 
     name: xbill
@@ -12,7 +11,7 @@ authors:
 
   gelopfalcon:
     name: Gerardo Lopez Falcon
-    description: GDE Cloud,
+    description: GDE Cloud
     avatar: https://lh3.googleusercontent.com/a-/ALV-UjX0IA165xwhhGrII_ukKiOf1X8KVe-v0ZCciFjcyhXWCZPzAc0=s300
   
   # Example individual author (add your GDEs here)
