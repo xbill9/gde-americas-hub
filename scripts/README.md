@@ -10,25 +10,44 @@ Helper scripts for managing the GDE Americas Hub.
 
 **Purpose:** Import a blog post from dev.to and convert to correct format.
 
+**Prerequisites:**
+- Python3 (used for reliable JSON parsing)
+
 **Usage:**
 
-```bash
-# Import from dev.to
-./scripts/import-from-devto.sh https://dev.to/username/post-title-123
+Simply copy the URL from your browser and paste it!
 
-# Import and specify author
-./scripts/import-from-devto.sh https://dev.to/username/post-title-123 your_author_id
+```bash
+# Import from dev.to (you'll be prompted for author)
+./scripts/import-from-devto.sh https://dev.to/gde/my-post-title-4ceh
+
+# Import and specify author directly
+./scripts/import-from-devto.sh https://dev.to/gde/my-post-title-4ceh xbill9
 ```
+
+**That's it!** Just copy-paste the URL directly from your browser. The script handles all URL formats automatically.
 
 **What it does:**
 
-1. ✅ Fetches post from dev.to API
-2. ✅ Converts frontmatter to MkDocs format
-3. ✅ Fixes date format (unquoted)
-4. ✅ Maps tags to categories
-5. ✅ Adds "General" category if none matched
-6. ✅ Creates file in `docs/blog/posts/`
-7. ✅ Shows next steps
+1. ✅ Accepts any dev.to URL format (just copy from browser)
+2. ✅ Fetches post from dev.to API
+3. ✅ Extracts all content using Python3 JSON parsing
+4. ✅ Converts frontmatter to MkDocs format
+5. ✅ Sets date format (unquoted YAML date object)
+6. ✅ Maps tags to categories:
+   - `googlecloud`, `gcp`, `cloud` → Google Cloud
+   - `ai`, `ml`, `adk`, `mcp`, `a2a`, `llm`, `genai` → AI & ML
+   - `android` → Android
+   - `firebase` → Firebase
+   - `flutter` → Flutter
+   - `web`, `javascript`, `webdev` → Web
+   - `maps`, `googlemaps` → Maps
+   - `ads`, `admob` → Ads
+   - `workspace`, `gsuite` → Workspace
+7. ✅ Adds "General" category if no tags matched
+8. ✅ Creates file in `docs/blog/posts/YYYY-MM-DD-slug.md`
+9. ✅ Adds canonical URL footer pointing to original dev.to post
+10. ✅ Shows next steps for validation and publishing
 
 **Use this when:** You have a post on dev.to and want to cross-post to the hub.
 

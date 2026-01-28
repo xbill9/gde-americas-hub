@@ -39,36 +39,42 @@ fi
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <dev.to-url> [author-slug]"
     echo ""
+    echo "Simply copy the URL from your browser and paste it here!"
+    echo ""
     echo "Examples:"
-    echo "  $0 https://dev.to/username/my-post-title-123"
-    echo "  $0 https://dev.to/username/my-post-title-123 john_doe"
+    echo "  $0 https://dev.to/username/my-post-title-abc123"
+    echo "  $0 https://dev.to/username/my-post-title-abc123 john_doe"
     echo ""
     echo "The author-slug should match an entry in docs/blog/.authors.yml"
     echo "If not provided, will prompt for it."
+    echo ""
+    echo "Requirements: Python3"
     exit 1
 fi
 
 DEVTO_URL=$1
 AUTHOR_SLUG=$2
 
-# Extract article ID from URL
-if [[ $DEVTO_URL =~ dev\.to/[^/]+/([^/]+)-([0-9]+) ]]; then
-    ARTICLE_SLUG="${BASH_REMATCH[1]}"
-    ARTICLE_ID="${BASH_REMATCH[2]}"
-elif [[ $DEVTO_URL =~ dev\.to/[^/]+/([^-]+) ]]; then
-    ARTICLE_SLUG="${BASH_REMATCH[1]}"
-    ARTICLE_ID=""
-else
-    print_error "Invalid dev.to URL format"
-fi
+# Extract username and slug from URL
+# Accepts any dev.to URL format: https://dev.to/username/article-slug
+if [[ $DEVTO_URL =~ dev\.to/([^/]+)/([^/]+) ]]; then
+    USERNAME="${BASH_REMATCH[1]}"
+    ARTICLE_SLUG="${BASH_REMATCH[2]}"
+    print_info "Fetching article from dev.to..."
 
-print_info "Fetching article from dev.to..."
-
-# Fetch article using dev.to API
-if [ -n "$ARTICLE_ID" ]; then
-    API_URL="https://dev.to/api/articles/${ARTICLE_ID}"
+    # Detect if URL has numeric ID (long number) or hash suffix
+    # If it ends with a long number (6+ digits), it's an ID -> use /api/articles/{id}
+    # Otherwise it's a slug with hash -> use /api/articles/{username}/{slug}
+    if [[ $ARTICLE_SLUG =~ -([0-9]{6,})$ ]]; then
+        # URL has numeric ID (e.g., -3158567)
+        ARTICLE_ID="${BASH_REMATCH[1]}"
+        API_URL="https://dev.to/api/articles/${ARTICLE_ID}"
+    else
+        # URL has hash or no special suffix (e.g., -4ceh or just slug)
+        API_URL="https://dev.to/api/articles/${USERNAME}/${ARTICLE_SLUG}"
+    fi
 else
-    print_error "Could not extract article ID from URL. Please use the full article URL."
+    print_error "Invalid dev.to URL format. Expected: https://dev.to/username/article-slug"
 fi
 
 # Fetch with curl
@@ -197,7 +203,14 @@ if [ -f "docs/blog/.authors.yml" ]; then
 fi
 
 # Create filename (date-slug.md)
-FILENAME="${POST_DATE}-${ARTICLE_SLUG}.md"
+# Remove dev.to suffix if present:
+# - Hash suffix (4-5 chars alphanumeric like -4ceh)
+# - Numeric ID suffix (6+ digits like -3158567)
+CLEAN_SLUG="$ARTICLE_SLUG"
+if [[ $ARTICLE_SLUG =~ ^(.+)-([a-z0-9]{4,5}|[0-9]{6,})$ ]]; then
+    CLEAN_SLUG="${BASH_REMATCH[1]}"
+fi
+FILENAME="${POST_DATE}-${CLEAN_SLUG}.md"
 OUTPUT_PATH="docs/blog/posts/${FILENAME}"
 
 # Check if file already exists

@@ -12,16 +12,16 @@ categories:
 
 Introduction: The Future of AI is Collaborative   Imagine asking an AI agent about Pokémon...
 
+
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/topoa09it0dz6xfklaxe.png)
-
-<!-- more -->
-
 
 
 **Introduction: The Future of AI is Collaborative**
 ---------------------------------------------------
 
 Imagine asking an AI agent about Pokémon and getting not just basic information, but comprehensive analysis comparing battle statistics, type effectiveness calculations, and fun trivia — all generated through seamless collaboration between specialized AI agents. This isn’t science fiction; it’s what we can build today using Google’s cutting-edge agent technologies.
+
+<!-- more -->
 
 In this blog post, we’ll explore how to build a production-ready ecosystem of collaborative AI agents using three revolutionary technologies:
 
